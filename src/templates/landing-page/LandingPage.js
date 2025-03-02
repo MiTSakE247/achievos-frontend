@@ -14,6 +14,7 @@ import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import Profile from './components/Profile';
 import { useState } from "react";
+import Dashboard from "./components/Dashboard"
 
 export default function LandingPage(props) {
   const [activeComponent, setActiveComponent] = useState("Hero");
@@ -28,7 +29,7 @@ export default function LandingPage(props) {
       case "FAQ":
         return <FAQ />;
       default:
-        return <Hero />;
+        return <Dashboard />;
     }
   };
 
