@@ -63,12 +63,15 @@ export default function SignInCard({ setIsSignUp }) {
       
       console.log(responseData);
 
-      if(responseData != password) {
+      if(responseData.split(":")[1] != password) {
         throw new Error("Invalid login credentials");
       }
 
       // ✅ Store token & user info
+      console.log(responseData);
       localStorage.setItem("token", responseData.token);
+      localStorage.setItem("id", responseData.split(':')[2]);
+      localStorage.setItem("data", responseData);
       localStorage.setItem("userEmail", email);
       localStorage.setItem("passwordHash", password);
       localStorage.setItem("user", JSON.stringify(responseData.user));
