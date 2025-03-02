@@ -3,7 +3,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
 import AppTheme from '../shared-theme/AppTheme';
-import AppAppBar from './components/AppAppBar';
+import NavBar from './components/NavBar';
 import Hero from './components/Hero';
 import LogoCollection from './components/LogoCollection';
 import Highlights from './components/Highlights';
@@ -12,18 +12,20 @@ import Features from './components/Features';
 import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
+import Profile from './components/Profile';
 import { useState } from "react";
 import Dashboard from "./components/Dashboard"
 
 export default function LandingPage(props) {
   const [activeComponent, setActiveComponent] = useState("Hero");
 
+  // Current Navigation ["Dashboard", "Profile", "Awards", "FAQ", "Blog"];
   const renderComponent = () => {
     switch (activeComponent) {
-      case "Features":
+      case "Dashboard":
         return <Features />;
-      case "Pricing":
-        return <Pricing />;
+      case "Profile":
+        return <Profile />;
       case "FAQ":
         return <FAQ />;
       default:
@@ -31,30 +33,10 @@ export default function LandingPage(props) {
     }
   };
 
-  console.log(renderComponent);
   return (
-    // <AppTheme {...props}>
-    //   <CssBaseline enableColorScheme />
-    //   <AppAppBar />
-    //   <Hero />
-    //   <div>
-    //     {/* <LogoCollection />
-    //     <Features />
-    //     <Divider />
-    //     <Testimonials />
-    //     <Divider />
-    //     <Highlights />
-    //     <Divider />
-    //     <Pricing />
-    //     <Divider />
-    //     <FAQ /> */}
-    //     <Divider />
-    //     <Footer />
-    //   </div>
-    // </AppTheme>
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
-      <AppAppBar setActiveComponent={setActiveComponent} />
+      <NavBar setActiveComponent={setActiveComponent} activeComponent={activeComponent}/>
       <Box
         sx={(theme) => ({
           width: "100%",

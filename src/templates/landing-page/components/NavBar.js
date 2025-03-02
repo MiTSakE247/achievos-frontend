@@ -35,7 +35,7 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   height: 80, // Set a fixed height
 }));
 
-export default function AppAppBar({ setActiveComponent, activeComponent }) {
+export default function NavBar({ setActiveComponent, activeComponent }) {
   const [streak, setStreak] = React.useState(0); // Default streak is 0
 
   const buttons = ["Dashboard", "Profile", "Awards", "FAQ", "Blog"];
