@@ -154,16 +154,7 @@ function Dashboard() {
   return (
     <Box sx={{ flexGrow: 1, pt: 12, pb: 8 }}>
       <Container maxWidth="lg">
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          sx={{ mb: 4, fontWeight: "bold" }}
-        >
-          Celebrate Achievements
-        </Typography>
-
-        <Grid container spacing={3} sx={{ mb: 8 }}>
+        <Grid container spacing={3} sx={{ mb: 8, marginTop: 1 }}>
           <Grid item xs={12} md={8}>
             <Grid container spacing={2} sx={{ height: "100%" }}>
               {achievements.slice(0, 2).map((achievement) => (
