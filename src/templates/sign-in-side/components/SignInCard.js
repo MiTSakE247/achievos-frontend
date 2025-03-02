@@ -13,7 +13,8 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
-import { AchievosIcon } from './CustomIcons';
+import AchievosLogo from '@templates/shared-theme/SitemarkIcon';
+import { signIn } from '@utils/api';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -48,16 +49,35 @@ export default function SignInCard({ setIsSignUp }) {
     setOpen(false);
   };
 
-  const handleSubmit = (event) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
+  const handleSubmit = async (event) => {
+    event.preventDefault(); // ✅ Prevent default form submission
+  
+    if (emailError || passwordError) return; // ✅ Stop if validation errors exist
+  
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const email = data.get("email");
+    const password = data.get("password");
+  
+    try {
+      const responseData = await signIn(email, password); // ✅ Call API
+      
+      console.log(responseData);
+
+      if(responseData != password) {
+        throw new Error("Invalid login credentials");
+      }
+
+      // ✅ Store token & user info
+      localStorage.setItem("token", responseData.token);
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("passwordHash", password);
+      localStorage.setItem("user", JSON.stringify(responseData.user));
+  
+      alert("Login Successful!");
+      window.location.href = "/"; // ✅ Redirect to home page
+    } catch (error) {
+      alert(`Sign-in failed: ${error.message}`);
+    }
   };
 
   const validateInputs = () => {
@@ -90,7 +110,7 @@ export default function SignInCard({ setIsSignUp }) {
   return (
     <Card variant="outlined">
       <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-        <AchievosIcon />
+        <AchievosLogo width={250} height={50} />
       </Box>
       <Typography
         component="h1"

@@ -12,7 +12,7 @@ import Features from './components/Features';
 import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
-import Profile from './components/Profile';
+import Profile from './components/Profile'
 import { useState } from "react";
 
 export default function LandingPage(props) {

@@ -1,9 +1,9 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { Geist, Geist_Mono } from "next/font/google";
 import LandingPage from "@templates/landing-page/LandingPage";
 import "./globals.css";
-import { Box } from "@mui/material";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,12 +17,14 @@ const geistMono = Geist_Mono({
 
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname(); // ✅ Get current route
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <LandingPage>{children}</LandingPage>
+        {pathname === "/authenticate" ? children : <LandingPage>{children}</LandingPage>}
       </body>
     </html>
   );

@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ThumbUpAltRoundedIcon from '@mui/icons-material/ThumbUpAltRounded';
-import { AchievosIcon } from './CustomIcons';
+import AchievosLogo from '@templates/shared-theme/SitemarkIcon';
 
 const items = [
   {
@@ -28,7 +28,7 @@ export default function Content() {
       }}
     >
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-        <AchievosIcon />
+        <AchievosLogo width={250} />
       </Box>
       {items.map((item, index) => (
         <Stack key={index} direction="row" sx={{ gap: 2 }}>
