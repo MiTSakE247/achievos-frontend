@@ -119,19 +119,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderColor: (theme.vars || theme).palette.divider,
 }));
 
-const StyledModal = styled(Box)(({ theme }) => ({
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper", // ✅ Clear, non-transparent background
-  boxShadow: 24, // ✅ Improved visibility
-  p: 4,
-  borderRadius: 2,
-  outline: "none", // ✅ Removes default browser outline
-}));
-
 const BadgeItem = styled(Paper)(({ theme, tier }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -317,7 +304,6 @@ const BadgeCollage = ({ badges }) => {
     </StyledPaper>
   );
 };
-
 
 const AchievementStats = () => (
   <StyledPaper elevation={0}>

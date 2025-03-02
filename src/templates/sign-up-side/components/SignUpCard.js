@@ -8,7 +8,8 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import { AchievosIcon } from './CustomIcons';
+import AchievosLogo from '@templates/shared-theme/SitemarkIcon';
+
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -29,6 +30,8 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 export default function SignUpCard({setIsSignUp}) {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  console.log("API_BASE_URL: " + API_BASE_URL);
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -49,7 +52,7 @@ export default function SignUpCard({setIsSignUp}) {
     console.log("inside hadnleSubmit");
     event.preventDefault();
     if (!validateInputs()) return;
-    console.log("Valid Inputs");
+    
     const data = new FormData(event.currentTarget);
     const formData = {
       name: data.get("name"),
@@ -60,20 +63,24 @@ export default function SignUpCard({setIsSignUp}) {
     console.log("Userdata: " + JSON.stringify(formData));
 
     try {
-      const response = await fetch("http://localhost:8080/api/users", {
+      const response = await fetch(`${API_BASE_URL}/users`, {
         method: "POST",
         mode: "cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
+      console.log("Response Status:", response.status); // ✅ Log status code
+      console.log("Response Headers:", response.headers); // ✅ Log headers
+  
   
       if (!response.ok) {
         throw new Error("Something went wrong");
       }
 
-      const responseData = await response.json();
+      const responseData = await response.text();
       console.log("User registered successfully:", responseData);
-      alert("Registration Successful!");
+      alert(`Success: ${responseData || "Registration Successful! Please Sign In."}`);
       setIsSignUp(false); // Switch to Sign In
     } catch (error) {
       console.error("Sign-up failed:", error);
@@ -122,7 +129,7 @@ export default function SignUpCard({setIsSignUp}) {
   return (
     <Card variant="outlined">
       <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-        <AchievosIcon />
+        <AchievosLogo />
       </Box>
       <Typography
         component="h1"
@@ -205,7 +212,7 @@ export default function SignUpCard({setIsSignUp}) {
         </FormControl>
         
         <Button type="submit" fullWidth variant="contained" onClick={validateInputs}>
-          Sign in
+          Register
         </Button>
         <Typography sx={{ textAlign: 'center' }}>
           Already have an account?{' '}

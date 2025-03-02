@@ -12,10 +12,12 @@ import Drawer from '@mui/material/Drawer';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
-import AchievosLogo from './SitemarkIcon';
+import AchievosLogo from '@templates/shared-theme/SitemarkIcon';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import Typography from '@mui/material/Typography';
 import SearchAppBar from './SearchAppBar';
+import { useRouter } from "next/router";
+import { redirect } from "next/navigation";
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -34,6 +36,10 @@ const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   overflow: 'hidden', // Ensures content doesn't push height
   height: 80, // Set a fixed height
 }));
+
+const handleRedirect = (mode) => {
+  window.location.href = `/authenticate?mode=${mode}`;
+};
 
 export default function NavBar({ setActiveComponent, activeComponent }) {
   const [streak, setStreak] = React.useState(0); // Default streak is 0
@@ -79,10 +85,10 @@ export default function NavBar({ setActiveComponent, activeComponent }) {
               alignItems: 'center',
             }}
           >
-            <Button color="primary" variant="text" size="small">
+            <Button color="primary" variant="text" size="small" onClick={ () => handleRedirect("signin") }>
               Sign in
             </Button>
-            <Button color="primary" variant="text" size="small">
+            <Button color="primary" variant="text" size="small" onClick={ () => handleRedirect("signup") }>
               Sign up
             </Button>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, color: 'text.primary' }}>

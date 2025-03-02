@@ -1,12 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Stack } from "@mui/material";
 import SignUpSide from "@templates/sign-up-side/SignUpSide";
 import SignInSide from "@templates/sign-in-side/SignInSide";
 
 export default function AuthPage() {
-  const [isSignUp, setIsSignUp] = useState(false);
+  const searchParams = useSearchParams();
+  const mode = searchParams.get("mode"); // ✅ Read query param
+  const [isSignUp, setIsSignUp] = useState(mode === "signup"); // ✅ Set initial state
 
   return (
     <Stack
@@ -17,3 +20,13 @@ export default function AuthPage() {
     </Stack>
   );
 }
+
+// "use client";
+
+// import Authenticate from "./authenticate";
+
+// export default function AuthPage({ searchParams }) {
+//   const isSignUp = searchParams?.mode === "signup"; // ✅ Read mode from searchParams
+
+//   return <Authenticate isSignUp={isSignUp} />;
+// }
