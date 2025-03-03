@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import { Badge as MuiBadge } from '@mui/material';
+import { fetchBadge } from "./api"; // ✅ Import API call
 
 // Mock badges data - replace with actual data fetching
 const mockBadges = [
@@ -99,17 +100,79 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderColor: (theme.vars || theme).palette.divider,
 }));
 
+const BadgeItem = styled(Paper)(({ theme, tier }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[2],
+  backgroundColor: theme.vars
+    ? `rgba(${theme.vars.palette.background.defaultChannel} / 0.6)`
+    : alpha(theme.palette.background.default, 0.6),
+  backdropFilter: 'blur(4px)',
+  border: '1px solid',
+  borderColor: tier === 'gold' 
+    ? theme.palette.warning.main 
+    : tier === 'silver' 
+      ? theme.palette.grey[400] 
+      : theme.palette.brown ? theme.palette.brown.main : '#cd7f32',
+  transition: 'transform 0.2s ease-in-out',
+  '&:hover': {
+    transform: 'scale(1.05)',
+  },
+}));
+
+
 const getRandomIcon = () => {
   const icons = ["🎖️", "⭐", "🌟", "🏅"];
   return icons[Math.floor(Math.random() * icons.length)];
 };
 
-const BadgeCollage = ({ badges }) => {
+const BadgeCollage = ({ userBadges, userGrantedBadges }) => {
+  console.log("USER BADGES:", userBadges);
   const [showAll, setShowAll] = useState(false);
+  const [showGrantedAll, setShowGrantedAll] = useState(false);
   const icon = getRandomIcon(); // ✅ Generates a random icon when component renders
+  const [badges, setBadges] = useState([]);
+  const [badgesGranted, setBadgesGranted] = useState([]);
+
+  useEffect(() => {
+    async function loadBadges() {
+      // write a code here to fetch user badges by traversing userBadges array and calling fetchBadge function and passing the badge id
+      if (!userBadges || userBadges.length === 0) return;
+      try {
+        const badgePromises = userBadges.map((transaction) => fetchBadge(transaction.badgeId));
+        const badgeData = await Promise.all(badgePromises);
+        console.log("Fetched badges:", badgeData);
+        setBadges(badgeData);
+        console.log("After badges is set:", badges);
+      } catch (error) {
+        console.error("Error fetching badges:", error);
+      }
+    }
+    loadBadges();
+  }, [userBadges]);
+
+  useEffect(() => {
+    async function loadBadges() {
+      if (!userGrantedBadges || userGrantedBadges.length === 0) return;
+      try {
+        const badgePromises = userGrantedBadges.map((transaction) => fetchBadge(transaction.badgeId));
+        const badgeData = await Promise.all(badgePromises);
+        console.log("Fetched badges:", badgeData);
+        setBadgesGranted(badgeData);
+        console.log("After badges is set:", badges);
+      } catch (error) {
+        console.error("Error fetching badges:", error);
+      }
+    }
+    loadBadges();
+  }, [userGrantedBadges]);
 
   // ✅ Show limited badges if `showAll` is false
   const displayedBadges = showAll ? badges : badges.slice(0, 5);
+  const displayedGrantedBadges = showGrantedAll ? badgesGranted : badgesGranted.slice(0, 5);
 
   return (
     <StyledPaper elevation={0}>
@@ -127,42 +190,102 @@ const BadgeCollage = ({ badges }) => {
         </Button>
       </Box>
       <Grid container spacing={2}>
-        {displayedBadges.map((badge) => (
-          <Grid item xs={6} sm={4} md={2.4} key={badge.badge_id}>
-            <BadgeItem tier={badge.tier}>
-              <MuiBadge
-                overlap="circular"
-                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                badgeContent={
-                  badge.tier === "gold" ? "🥇" : badge.tier === "silver" ? "🥈" : "🥉"
-                }
-              >
-                <Avatar
-                  src={badge.icon_url}
-                  alt={badge.name}
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    mb: 1,
-                    border: "2px solid",
-                    borderColor:
-                      badge.tier === "gold"
-                        ? "warning.main"
-                        : badge.tier === "silver"
-                        ? "grey.400"
-                        : "brown.main",
-                  }}
-                />
-              </MuiBadge>
-              <Typography variant="subtitle2" align="center">
-                {badge.name}
-              </Typography>
-              <Typography variant="caption" align="center" color="text.secondary">
-                {badge.category}
-              </Typography>
-            </BadgeItem>
-          </Grid>
-        ))}
+        {displayedBadges.map((badge) => {
+          console.log("Badge:", badge);
+          return (
+            <Grid item xs={6} sm={4} md={2.4} key={badge.badgeId}>
+              <BadgeItem tier={badge.badgeTier}>
+                <MuiBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  badgeContent={
+                    badge.badgeTier === "GOLD" ? "🥇" : badge.tier === "SILVER" ? "🥈" : "🥉"
+                  }
+                >
+                  <Avatar
+                    src={badge.badgeImg}
+                    alt={badge.badgeName}
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      mb: 1,
+                      border: "2px solid",
+                      borderColor:
+                        badge.badgeTier === "GOLD"
+                          ? "warning.main"
+                          : badge.badgeTier === "SILVER"
+                          ? "grey.400"
+                          : "brown.main",
+                    }}
+                  />
+                </MuiBadge>
+                <Typography variant="subtitle2" align="center">
+                  {badge.badgeName}
+                </Typography>
+                <Typography variant="caption" align="center" color="text.secondary">
+                  {badge.badgeCategory}
+                </Typography>
+              </BadgeItem>
+            </Grid>
+          )
+        }
+        )}
+      </Grid>
+
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Typography variant="h5" component="h2">
+          {`${icon} Issued Badges ${icon}`}
+        </Typography>
+        <Button
+          variant="text"
+          color="primary"
+          size="small"
+          onClick={() => setShowGrantedAll(!showGrantedAll)}
+        >
+          {showAll ? "Show Less" : "View All"}
+        </Button>
+      </Box>
+      <Grid container spacing={2}>
+        {displayedGrantedBadges.map((badge) => {
+          console.log("Badge:", badge);
+          return (
+            <Grid item xs={6} sm={4} md={2.4} key={badge.badgeId}>
+              <BadgeItem tier={badge.badgeTier}>
+                <MuiBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                  badgeContent={
+                    badge.badgeTier === "GOLD" ? "🥇" : badge.tier === "SILVER" ? "🥈" : "🥉"
+                  }
+                >
+                  <Avatar
+                    src={badge.badgeImg}
+                    alt={badge.badgeName}
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      mb: 1,
+                      border: "2px solid",
+                      borderColor:
+                        badge.badgeTier === "GOLD"
+                          ? "warning.main"
+                          : badge.badgeTier === "SILVER"
+                          ? "grey.400"
+                          : "brown.main",
+                    }}
+                  />
+                </MuiBadge>
+                <Typography variant="subtitle2" align="center">
+                  {badge.badgeName}
+                </Typography>
+                <Typography variant="caption" align="center" color="text.secondary">
+                  {badge.badgeCategory}
+                </Typography>
+              </BadgeItem>
+            </Grid>
+          )
+        }
+        )}
       </Grid>
     </StyledPaper>
   );

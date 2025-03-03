@@ -5,12 +5,36 @@ import ProfileHeader from "./ProfileHeader";
 import BadgeCollage from "./BadgeCollage";
 import AchievementStats from "./AchievementStats";
 import EditProfileModal from "./EditProfileModal";
-import { fetchProfile } from "./api"; // ✅ Import API call
+import { fetchProfile, fetchUserBadges, fetchUserBadgesByIssuer } from "./api"; // ✅ Import API call
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
   const router = useRouter();
+  const [userBadges, setUserBadges] = useState([]);
+  const [userGrantedBadges, setUserGrantedBadges] = useState([]);
+
+  useEffect(() => {
+    async function loadUserBadges() {
+      const userGrantedBadgeData = await fetchUserBadgesByIssuer(router);
+      if (userGrantedBadgeData) {
+        setUserGrantedBadges(userGrantedBadgeData);
+      }
+    }
+    loadUserBadges();
+  }, [router]);
+
+
+  useEffect(() => {
+    async function loadUserBadges() {
+      const userBadgeData = await fetchUserBadges(router);
+      if (userBadgeData) {
+        console.log("Fetched user badges:", userBadgeData);
+        setUserBadges(userBadgeData);
+      }
+    }
+    loadUserBadges();
+  }, [router]);
 
   useEffect(() => {
     async function loadProfile() {
@@ -21,6 +45,8 @@ export default function Profile() {
   }, [router]);
 
   if (!user) return <p>Loading profile...</p>;
+  if (!userBadges) return <p>No badges received yet...</p>;
+  if (!userGrantedBadges) return <p>No badges granted yet...</p>;
 
   return (
     <Box
@@ -42,7 +68,7 @@ export default function Profile() {
             <ProfileHeader user={user} onEdit={() => setEditOpen(true)} />
           </Grid>
           <Grid item xs={12}>
-            <BadgeCollage badges={user.badges || []} />
+            <BadgeCollage userBadges={userBadges} userGrantedBadges={userGrantedBadges} />
           </Grid>
           <Grid item xs={12}>
             <AchievementStats />
